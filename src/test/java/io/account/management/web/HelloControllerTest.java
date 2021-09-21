@@ -1,5 +1,6 @@
 package io.account.management.web;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +25,23 @@ class HelloControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/hello"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string(hello));
+    }
+
+    @Test
+    public void 리턴_helloDto() throws Exception {
+        // given
+        String name = "hello";
+        int amount = 1000;
+
+        // when
+
+        // then
+        mockMvc.perform(MockMvcRequestBuilders.get("/hello/dto")
+                        .param("name", name)
+                        .param("amount", String.valueOf(amount)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", Matchers.is(name)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.amount", Matchers.is(amount)));
     }
 
 }

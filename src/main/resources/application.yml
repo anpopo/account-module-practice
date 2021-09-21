@@ -1,0 +1,8 @@
+spring:
+  jpa:
+    show_sql: true
+    hibernate:
+      database-platform: org.hibernate.dialect.MariaDB103Dialect
+    properties:
+      hibernate:
+        format_sql: true
