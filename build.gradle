@@ -60,8 +60,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	// spring security
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-//	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
 
 	// validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -72,6 +72,11 @@ dependencies {
 	// sql문 이쁘게보기
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
 
+	// oauth2
+	implementation 'org.springframework.security:spring-security-oauth2-client'
+
+	// jwt
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
 }
 
