@@ -1,6 +1,7 @@
 package io.account.management.web;
 
 import io.account.management.App;
+import io.account.management.domain.posts.Posts;
 import io.account.management.service.posts.PostsService;
 import io.account.management.web.dto.PostsResponseDto;
 import io.account.management.web.dto.PostsSaveRequestDto;
@@ -21,10 +22,8 @@ public class PostsController {
     private final PostsService postsService;
 
     @PostMapping("/posts")
-    public ResponseEntity<URI> savePosts(@RequestBody PostsSaveRequestDto requestDto) {
-
+    public ResponseEntity<Posts> savePosts(@RequestBody PostsSaveRequestDto requestDto) {
         Long savedPosts = postsService.save(requestDto);
-
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -44,5 +43,10 @@ public class PostsController {
         return ResponseEntity.ok(postsService.findById(id));
     }
 
+    @DeleteMapping("/posts/{id}")
+    public Long delete(@PathVariable Long id) {
+        postsService.delete(id);
+        return id;
+    }
 }
 

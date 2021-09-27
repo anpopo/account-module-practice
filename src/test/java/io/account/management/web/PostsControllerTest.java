@@ -1,12 +1,10 @@
 package io.account.management.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.account.management.App;
 import io.account.management.domain.posts.Posts;
 import io.account.management.domain.posts.PostsRepository;
 import io.account.management.web.dto.PostsSaveRequestDto;
 import io.account.management.web.dto.PostsUpdateRequestDto;
-import org.aspectj.lang.annotation.After;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -18,12 +16,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Objects;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PostsControllerTest {
@@ -42,7 +37,6 @@ class PostsControllerTest {
         postsRepository.deleteAll();
     }
 
-    @Transactional
     @Test
     public void Posts_등록() throws Exception {
         // given
@@ -62,7 +56,7 @@ class PostsControllerTest {
 
         // then
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Assertions.assertThat(responseEntity.getBody()).isEqualTo("/api/" + App.VERSION + "/posts/" + 1);
+        Assertions.assertThat(Objects.requireNonNull(responseEntity.getHeaders().getLocation()).toString()).isEqualTo(url + "/1");
 
         List<Posts> posts = postsRepository.findAll();
         Assertions.assertThat(posts.get(0).getTitle()).isEqualTo(title);
@@ -70,6 +64,8 @@ class PostsControllerTest {
 
     }
 
+    // Transactional Annotation 사용시 데이터가 save 되지만 실제 데이터에는 없기 때문에 select 시 404 에러가 발생하게 됨.
+    // 따라서 Transactional 을 쓰지 않고 @AfterEach 를 이용함
     @Test
     public void Posts_수정() throws Exception {
         // given
@@ -100,7 +96,11 @@ class PostsControllerTest {
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(responseEntity.getBody()).isGreaterThan(0L);
 
+
+
         List<Posts> all = postsRepository.findAll();
+
+        System.out.println("this is new " + all.get(0).toString());
         Assertions.assertThat(all.get(0).getTitle()).isEqualTo(title);
         Assertions.assertThat(all.get(0).getContent()).isEqualTo(content);
 
