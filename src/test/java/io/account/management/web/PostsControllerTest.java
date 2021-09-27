@@ -18,7 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PostsControllerTest {
@@ -56,7 +58,7 @@ class PostsControllerTest {
 
         // then
         Assertions.assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Assertions.assertThat(Objects.requireNonNull(responseEntity.getHeaders().getLocation()).toString()).isEqualTo(url + "/1");
+        Assertions.assertThat(responseEntity.getHeaders().getLocation().toString()).startsWith(url);
 
         List<Posts> posts = postsRepository.findAll();
         Assertions.assertThat(posts.get(0).getTitle()).isEqualTo(title);
@@ -104,6 +106,32 @@ class PostsControllerTest {
         Assertions.assertThat(all.get(0).getTitle()).isEqualTo(title);
         Assertions.assertThat(all.get(0).getContent()).isEqualTo(content);
 
+    }
+
+    @Test
+    public void 포스트_삭제() throws Exception {
+        // given
+        // given
+        Posts savedPosts = postsRepository.save(
+                Posts.builder()
+                        .title("title")
+                        .content("content")
+                        .author("dkstpgud@gmail.com")
+                        .build());
+
+        Long deleteId = savedPosts.getId();
+        String url = "http://localhost:" + port + "/api/" + App.VERSION + "/posts/" + deleteId;
+
+        // when
+        restTemplate.delete(url);
+
+        // then
+        List<Posts> all = postsRepository.findAll();
+        Assertions.assertThat(all.size()).isEqualTo(0);
+
+        Optional<Posts> deletedPosts = postsRepository.findById(deleteId);
+
+        org.junit.jupiter.api.Assertions.assertThrows(NoSuchElementException.class, deletedPosts::get);
     }
 
 
