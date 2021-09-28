@@ -2,7 +2,7 @@ package io.account.management.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.account.management.domain.BaseTimeEntity;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email")})
 @Entity
 public class Users extends BaseTimeEntity {
@@ -20,6 +20,7 @@ public class Users extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String name;
+
     @Column(nullable = false)
     private String email;
 
@@ -42,4 +43,24 @@ public class Users extends BaseTimeEntity {
     @Column(nullable = false)
     private Roles role;
 
+    @Builder
+    public Users(String name, String email, String imageUrl, Boolean emailVerified, String password, AuthProvider provider, String providerId, Roles role) {
+        this.name = name;
+        this.email = email;
+        this.imageUrl = imageUrl;
+        this.emailVerified = emailVerified;
+        this.password = password;
+        this.provider = provider;
+        this.providerId = providerId;
+        this.role = role;
+    }
+
+    public void updateNameAndImageUrl(String name, String imageUrl) {
+        this.name = name;
+        this.imageUrl = imageUrl;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
 }
